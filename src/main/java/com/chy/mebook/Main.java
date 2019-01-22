@@ -129,6 +129,7 @@ public class Main {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
 
 			Book.writeBook("e:\\ResilioSync\\mebookcn" + this.year_month + ".txt", book);
+			Book.write189("e:\\ResilioSync\\tyy189" + this.year_month + ".txt", book);
 		} catch (NullPointerException e) {
 			// e.printStackTrace();
 			log.error(e.getMessage());
@@ -186,7 +187,7 @@ public class Main {
 		// String key=(String)iter.next();
 		// System.out.println(key+": "+props.getProperty(key));
 		// }
-		String year_month = "201812";
+		String year_month = "201901";
 		Main mainTask = new Main("http://mebook.cc/date/" + year_month.substring(0, 4) + "/"
 				+ year_month.substring(4), year_month);
 		mainTask.crawleSite();

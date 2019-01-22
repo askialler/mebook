@@ -14,8 +14,6 @@ public class FileUtils {
 		try {
 			// FileWriter fw=new FileWriter(filename, true);
 			bw = new BufferedWriter(new FileWriter(filename, true));
-			bw.write("********************************************************\r\n");
-			bw.write("********************************************************\r\n");
 			bw.write(content);
 
 		} catch (IOException e) {
