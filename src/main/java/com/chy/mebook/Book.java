@@ -103,7 +103,8 @@ public class Book {
 		try {
 			while((link189 = reader.readLine()) != null) {
 				if(link189.startsWith("https://cloud.189.cn")) {
-					FileUtils.writeFile(filename, link189 + System.lineSeparator());
+					
+					FileUtils.writeFile(filename, link189.split(" ")[0] + System.lineSeparator());
 					hasLink189 = true;
 					break;
 				}
