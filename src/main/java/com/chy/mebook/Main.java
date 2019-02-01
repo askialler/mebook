@@ -1,8 +1,8 @@
 package com.chy.mebook;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -14,17 +14,37 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.chy.mebook.utils.ConfigUtil;
+
 public class Main {
 	private static Log log = LogFactory.getLog(Main.class);
 
 	private Set<String> bookUrls;
 	private String homepage;
-	private String year_month;
+	private String mebookFilePath;
+	private String tyy189Path;
 
-	public Main(String homepage, String year_month) {
+	public Main(String homepage, String yearAndMonth, String fileSavePath) {
 		this.homepage = homepage;
-		this.year_month = year_month;
 		this.bookUrls = new HashSet<String>();
+		File savePath = new File(fileSavePath);
+		if (!savePath.exists()) {
+			savePath.mkdirs();
+		}
+		mebookFilePath = fileSavePath + File.separator + "mebookcn_" + yearAndMonth + ".txt";
+		tyy189Path = fileSavePath + File.separator + "tyy189_" + yearAndMonth + ".txt";
+		log.info("mebookcn file: " + mebookFilePath);
+		log.info("tyy189 file: " + tyy189Path);
+		File mebookFile = new File(mebookFilePath);
+		File tyy189File = new File(tyy189Path);
+		if (mebookFile.exists()) {
+			log.info("mebookFile exists, remove it");
+			mebookFile.delete();
+		}
+		if (tyy189File.exists()) {
+			log.info("tyy189File exists, remove it");
+			tyy189File.delete();
+		}
 	}
 
 	public void crawleSite() {
@@ -66,7 +86,7 @@ public class Main {
 
 	public void getBookPage(Document dateDoc) throws URISyntaxException {
 		String bookUrl = null;
-		String bookTitle=null;
+		String bookTitle = null;
 		Elements eles = dateDoc.select("ul.list h2>a[title]");
 		Iterator<Element> iter = eles.iterator();
 		while (iter.hasNext()) {
@@ -77,12 +97,12 @@ public class Main {
 				log.debug(bookTitle);
 				log.debug(bookUrl);
 			}
-			if(!this.bookUrls.contains(bookUrl)) {
+			if (!this.bookUrls.contains(bookUrl)) {
 				bookUrls.add(bookUrl);
 				getBookItem(bookUrl);
 			} else {
 				if (log.isWarnEnabled()) {
-					log.warn(bookUrl  + "has been downloaded.  discard!");
+					log.warn(bookUrl + "has been downloaded.  discard!");
 				}
 			}
 
@@ -106,10 +126,6 @@ public class Main {
 				strb.append("\r\n");
 			}
 			book.setIntroduction(strb.toString());
-			// if (log.isDebugEnabled()) {
-			// log.debug("book[" + book.getTitle() + ", introduction: " +
-			// book.getIntroduction());
-			// }
 
 			String dlAddr = bookDoc.select("p.downlink a.downbtn").first().attr("href");
 			if (log.isDebugEnabled()) {
@@ -121,19 +137,17 @@ public class Main {
 			if (log.isDebugEnabled()) {
 				log.debug("*******************************************************************");
 				log.debug("book[" + book.getTitle() + "]");
-				// log.debug("introduction: "+ book.getIntroduction());
 				log.debug("bdyun addr: " + book.getDownloadAddr());
 				log.debug("bdy password: " + book.getDownloadPassword());
 				log.debug("*******************************************************************");
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
 
-			Book.writeBook("e:\\ResilioSync\\mebookcn" + this.year_month + ".txt", book);
-			Book.write189("e:\\ResilioSync\\tyy189" + this.year_month + ".txt", book);
+			Book.writeBook(mebookFilePath, book);
+			Book.write189(tyy189Path, book);
 		} catch (NullPointerException e) {
 			// e.printStackTrace();
 			log.error(e.getMessage());
-			log.error("can not find the download information for this book:" + book.getTitle());
+			log.error("can not find the download information for thi	s book:" + book.getTitle());
 			log.error("  " + book.getTitle());
 			log.error("  " + book.getMebookAddr());
 
@@ -179,17 +193,21 @@ public class Main {
 
 	public static void main(String[] args) {
 		PropertyConfigurator.configure("./conf/log4j.properties");
-		// Properties props=System.getProperties();
-		// System.out.println(props.toString());
-		// Set<Object> keys= props.keySet();
-		// Iterator<Object> iter=keys.iterator();
-		// while(iter.hasNext()) {
-		// String key=(String)iter.next();
-		// System.out.println(key+": "+props.getProperty(key));
-		// }
-		String year_month = "201901";
-		Main mainTask = new Main("http://mebook.cc/date/" + year_month.substring(0, 4) + "/"
-				+ year_month.substring(4), year_month);
+		String fileSavePath = "";
+		String yearAndMonth = "";
+		if (args.length == 2) {
+			fileSavePath = args[0];
+			yearAndMonth = args[1];
+		} else {
+			log.info("no args, read config file.");
+			fileSavePath = ConfigUtil.getValue("file.save.path");
+			yearAndMonth = ConfigUtil.getValue("mebook.books.month");
+		}
+		log.info("fileSavePath: " + fileSavePath);
+		log.info("yearAndMonth: " + yearAndMonth);
+
+		Main mainTask = new Main("http://mebook.cc/date/" + yearAndMonth.substring(0, 4) + "/"
+				+ yearAndMonth.substring(4), yearAndMonth, fileSavePath);
 		mainTask.crawleSite();
 
 	}
