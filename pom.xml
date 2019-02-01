@@ -4,7 +4,7 @@
 
 	<groupId>com.chy</groupId>
 	<artifactId>mebook</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.5-RELEASE</version>
 	<packaging>jar</packaging>
 
 	<name>mebook</name>
