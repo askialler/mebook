@@ -2,7 +2,6 @@ package com.chy.mebook.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -18,11 +17,14 @@ public class ConfigUtil {
 		log.debug("ready to load config.properties");
 		InputStream input = null;
 		try {
-			input = new FileInputStream(new File("./conf/config.properties"));
+			File configFile = new File("config.properties");
+			if (configFile.exists()) {
+				input = new FileInputStream(configFile);
+			} else {
+				log.warn("can not find config.properties outside, use config.properties in jar.");
+				input = ConfigUtil.class.getClassLoader().getResourceAsStream("config.properties");
+			}
 			properties.load(input);
-		} catch (FileNotFoundException e) {
-			log.error("can not find config file: config.properties", e);
-			System.exit(-1);
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		} finally {

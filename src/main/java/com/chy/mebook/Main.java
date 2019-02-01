@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.PropertyConfigurator;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -61,8 +60,6 @@ public class Main {
 	public void getBooksByMonth(HtmlPage monthPage) throws URISyntaxException {
 
 		if (monthPage != null) {
-			// HtmlPage datePage=new HtmlPage(uri);
-			// System.out.println(catagery);
 			Document page1 = PageParser.parseWebPage(monthPage.toString());
 			getBookPage(page1);
 			String strPageNum = page1.select(".page-numbers").text().split(" ")[5];
@@ -145,12 +142,10 @@ public class Main {
 			Book.writeBook(mebookFilePath, book);
 			Book.write189(tyy189Path, book);
 		} catch (NullPointerException e) {
-			// e.printStackTrace();
 			log.error(e.getMessage());
 			log.error("can not find the download information for thi	s book:" + book.getTitle());
 			log.error("  " + book.getTitle());
 			log.error("  " + book.getMebookAddr());
-
 		}
 
 	}
@@ -182,9 +177,6 @@ public class Main {
 		while (iter2.hasNext()) {
 			Element dlink = iter2.next();
 			sb.append(dlink.attr("href")).append("\r\n");
-			// if (dlink.text().equals("百度网盘")) {
-			// bdyStrs[0] = dlink.attr("href");
-			// }
 
 		}
 		bdyStrs[0] = sb.toString();
@@ -192,7 +184,7 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		PropertyConfigurator.configure("./conf/log4j.properties");
+		// PropertyConfigurator.configure("./conf/log4j.properties");
 		String fileSavePath = "";
 		String yearAndMonth = "";
 		if (args.length == 2) {
