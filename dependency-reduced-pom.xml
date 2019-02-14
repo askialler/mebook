@@ -4,9 +4,12 @@
   <groupId>com.chy</groupId>
   <artifactId>mebook</artifactId>
   <name>mebook</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.5-RELEASE</version>
   <url>http://maven.apache.org</url>
   <build>
+    <defaultGoal>package</defaultGoal>
+    <directory>${basedir}/target</directory>
+    <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
@@ -23,6 +26,7 @@
                   <mainClass>com.chy.mebook.Main</mainClass>
                 </transformer>
               </transformers>
+              <minimizeJar>true</minimizeJar>
             </configuration>
           </execution>
         </executions>
