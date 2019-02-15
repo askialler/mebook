@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Calendar;
+import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,99 +13,125 @@ import org.apache.commons.logging.LogFactory;
 import com.chy.mebook.utils.FileUtils;
 
 public class Book {
-	public Book(){
-		
+	public Book() {
+
 	}
-	
+
 	private static Log log = LogFactory.getLog(PageParser.class);
 	private String title;
+	// publication date of book
+	private String pubDate;
 	private String introduction;
 	private String downloadAddr;
 	private String downloadPassword;
 	private String mebookAddr;
+
 	/**
 	 * @return the title
 	 */
 	public String getTitle() {
 		return title;
 	}
+
 	/**
-	 * @param title the title to set
+	 * @param title
+	 *            the title to set
 	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
+
+	public String getPubDate() {
+		return pubDate;
+	}
+
+	public void setPubDate(String pubDate) {
+		this.pubDate = pubDate;
+	}
+
 	/**
 	 * @return the introduction
 	 */
 	public String getIntroduction() {
 		return introduction;
 	}
+
 	/**
-	 * @param introduction the introduction to set
+	 * @param introduction
+	 *            the introduction to set
 	 */
 	public void setIntroduction(String introduction) {
 		this.introduction = introduction;
 	}
+
 	/**
 	 * @return the downloadAddr
 	 */
 	public String getDownloadAddr() {
 		return downloadAddr;
 	}
+
 	/**
-	 * @param downloadAddr the downloadAddr to set
+	 * @param downloadAddr
+	 *            the downloadAddr to set
 	 */
 	public void setDownloadAddr(String downloadAddr) {
 		this.downloadAddr = downloadAddr;
 	}
+
 	/**
 	 * @return the downloadPassword
 	 */
 	public String getDownloadPassword() {
 		return downloadPassword;
 	}
+
 	/**
-	 * @param downloadPassword the downloadPassword to set
+	 * @param downloadPassword
+	 *            the downloadPassword to set
 	 */
 	public void setDownloadPassword(String downloadPassword) {
 		this.downloadPassword = downloadPassword;
 	}
+
 	/**
 	 * @return the title
 	 */
 	public String getMebookAddr() {
 		return mebookAddr;
 	}
+
 	/**
-	 * @param title the title to set
+	 * @param title
+	 *            the title to set
 	 */
 	public void setMebookAddr(String mebookAddr) {
 		this.mebookAddr = mebookAddr;
 	}
 
-	public static void writeBook(String filename,Book book){
-		StringBuilder content=new StringBuilder();
+	public static void writeBook(String filename, Book book) {
+		StringBuilder content = new StringBuilder();
 		content.append("********************************************************\r\n");
 		content.append("********************************************************\r\n");
-		content.append("title: "+book.title+"\r\n");
-		content.append("mebook address: "+book.mebookAddr+"\r\n");
-		content.append("introduction: "+book.introduction+"\r\n");
-		content.append("download link:\r\n"+book.downloadAddr+"\r\n");
-		content.append("download password: "+book.downloadPassword+"\r\n");
+		content.append(book.pubDate + "\r\n");
+		content.append("title: " + book.title + "\r\n");
+		content.append("mebook address: " + book.mebookAddr + "\r\n");
+		content.append("introduction: " + book.introduction + "\r\n");
+		content.append("download link:\r\n" + book.downloadAddr + "\r\n");
+		content.append("download password: " + book.downloadPassword + "\r\n");
 		content.append("\r\n\r\n");
 		FileUtils.writeFile(filename, content.toString());
-		
+
 	}
-	
-	public static void write189(String filename,Book book){
+
+	public static void write189(String filename, Book book) {
 		String link189 = null;
 		BufferedReader reader = new BufferedReader(new StringReader(book.downloadAddr));
-		boolean hasLink189=false;
+		boolean hasLink189 = false;
 		try {
-			while((link189 = reader.readLine()) != null) {
-				if(link189.startsWith("https://cloud.189.cn")) {
-					
+			while ((link189 = reader.readLine()) != null) {
+				if (link189.startsWith("https://cloud.189.cn")) {
+
 					FileUtils.writeFile(filename, link189.split(" ")[0] + System.lineSeparator());
 					hasLink189 = true;
 					break;
@@ -111,9 +139,9 @@ public class Book {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}finally {
-			if(!hasLink189) {
-				log.warn("this book has no tyy189 download link:  "+book.getTitle());
+		} finally {
+			if (!hasLink189) {
+				log.warn("this book has no tyy189 download link:  " + book.getTitle());
 			}
 			try {
 				reader.close();
@@ -122,5 +150,5 @@ public class Book {
 			}
 		}
 	}
-	
+
 }
